@@ -1,43 +1,18 @@
 
-import { createConfig } from "wagmi";
-import {
-  connectorsForWallets,
-} from "@rainbow-me/rainbowkit";
-import { base, canto, fantom, mantle } from "wagmi/chains";
-import {
-    walletConnectWallet,
-    metaMaskWallet,
-  } from "@rainbow-me/rainbowkit/wallets";
-  import { createClient, http } from "viem";
+import { createConfig, http } from 'wagmi'
+import { mainnet, sepolia } from 'wagmi/chains'
+import { walletConnect } from 'wagmi/connectors'
+
+export const config = createConfig({
+  chains: [mainnet, sepolia],
+  connectors: [walletConnect({
+    projectId: '3fcc6bba6f1de962d911bb5b5c3dba68',
+  })], 
+  transports: {
+    [mainnet.id]: http('https://mainnet.example.com'),
+    [sepolia.id]: http('https://sepolia.example.com'),
+  },
+})
   
-  const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!;
-  
-  const connectors = connectorsForWallets(
-    [
-      {
-        groupName: "Recommended",
-        wallets: [
-          metaMaskWallet,
-          walletConnectWallet,
-        ],
-      },
-    ],
-    {
-      projectId: projectId || "YOUR_PROJECT_ID", // rainbowkit will use an example ID when this is YOUR_PROJECT_ID
-      appName: "Velocimeter",
-    }
-  );
-  
-  export const config = createConfig({
-    ssr: true, // https://github.com/wevm/wagmi/issues/3775
-    connectors,
-    chains: [fantom, base, canto, mantle],
-    client({ chain }) {
-      return createClient({
-        chain,
-        transport: http(),
-      });
-    },
-  });
 
   export const abi = [];
